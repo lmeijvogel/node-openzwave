@@ -4,5 +4,6 @@
 *.tgz
 OZW_Log.txt
 build
+!deps/open-zwave/cpp/build
 zwcfg*
 zwscene.xml
