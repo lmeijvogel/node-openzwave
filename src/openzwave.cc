@@ -48,6 +48,7 @@ struct OZW: ObjectWrap {
 	static Handle<Value> DisablePoll(const Arguments& args);
 	static Handle<Value> HardReset(const Arguments& args);
 	static Handle<Value> SoftReset(const Arguments& args);
+	static Handle<Value> HealNetwork(const Arguments& args);
 };
 
 Persistent<Object> context_obj;
@@ -737,6 +738,16 @@ Handle<Value> OZW::SoftReset(const Arguments& args)
 	return scope.Close(Undefined());
 }
 
+Handle<Value> OZW::HealNetwork(const Arguments& args)
+{
+	HandleScope scope;
+
+	bool doRR = true;
+	OpenZWave::Manager::Get()->HealNetwork(homeid, doRR);
+
+	return scope.Close(Undefined());
+}
+
 extern "C" void init(Handle<Object> target)
 {
 	HandleScope scope;
@@ -758,6 +769,7 @@ extern "C" void init(Handle<Object> target)
 	NODE_SET_PROTOTYPE_METHOD(t, "disablePoll", OZW::EnablePoll);
 	NODE_SET_PROTOTYPE_METHOD(t, "hardReset", OZW::HardReset);
 	NODE_SET_PROTOTYPE_METHOD(t, "softReset", OZW::SoftReset);
+	NODE_SET_PROTOTYPE_METHOD(t, "healNetwork", OZW::HealNetwork);
 
 	target->Set(String::NewSymbol("Emitter"), t->GetFunction());
 }

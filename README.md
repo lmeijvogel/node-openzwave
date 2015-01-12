@@ -96,6 +96,13 @@ zwave.hardReset();      // destructive! will wipe out all known configuration
 zwave.softReset();      // non-destructive, just resets the chip
 ```
 
+Repair network. Call 'healNetwork' will do a node-by-node network heal and perform
+a return route initialization.
+
+```js
+zwave.healNetwork();
+```
+
 ### Events
 
 The supported events are:
