@@ -8,6 +8,19 @@ Z-Wave network from JavaScript.
 It is currently able to scan a Z-Wave network, report on connected devices,
 monitor the network for changes, and has rudimentary write support.
 
+> This fork is a somewhat experimental version of the original
+> [node-openzwave](https://github.com/jperkin/node-openzwave) which appears to
+> be fairly unmaintained with not everything implemented yet.
+> With this fork I'm trying to improve on the original work based on changes
+> done by the community.
+>
+> Changes include:
+> * Support for Scene & Node Events
+> * More recent OpenZWave (1.3.x)
+> * Network healing functionality
+> * Support for `setConfigParam
+> * Instance control of switches
+
 ## Install
 
 The module currently builds only on OS X and Linux.  On Linux you will need to
@@ -23,15 +36,16 @@ Start by loading the addon and creating a new instance, specifying a path to
 the USB device:
 
 ```js
-var OZW = require('openzwave');
-var zwave = new OZW('/dev/ttyUSB0');
+var OpenZWave = require('openzwave');
+var zwave     = new OpenZWave('/dev/ttyUSB0');
 ```
 
 An optional object can be passed at creation time to alter the behavior of the
 ZWave module.  The options currently supported and their defaults are:
 
 ```js
-var zwave = new OZW('/dev/ttyUSB0', {
+var OpenZWave = require('openzwave');
+var zwave     = new OpenZWave('/dev/ttyUSB0', {
         logging: false,           // enable logging to OZW_Log.txt
         consoleoutput: false,     // copy logging to the console
         saveconfig: false,        // write an XML network layout
