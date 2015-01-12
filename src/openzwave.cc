@@ -601,7 +601,7 @@ Handle<Value> OZW::SetName(const Arguments& args)
 /*
  * Switch a COMMAND_CLASS_SWITCH_BINARY on/off
  */
-void set_switch(uint8_t nodeid, bool state)
+void set_switch(uint8_t nodeid, bool state, uint8_t instance)
 {
 	NodeInfo *node;
 	std::list<OpenZWave::ValueID>::iterator vit;
@@ -611,6 +611,10 @@ void set_switch(uint8_t nodeid, bool state)
 			if ((*vit).GetCommandClassId() == 0x25) {
 				OpenZWave::Manager::Get()->SetValue(*vit, state);
 				break;
+				if ( ! instance || (*vit).GetInstance() == instance ) {
+					OpenZWave::Manager::Get()->SetValue(*vit, state);
+					break;
+				}
 			}
 		}
 	}
@@ -620,7 +624,13 @@ Handle<Value> OZW::SwitchOn(const Arguments& args)
 	HandleScope scope;
 
 	uint8_t nodeid = args[0]->ToNumber()->Value();
-	set_switch(nodeid, true);
+	uint8_t instance = 0;
+
+	if ( args.Length() > 1 ) {
+		instance = args[1]->ToNumber()->Value();
+	}
+
+	set_switch(nodeid, true, instance);
 
 	return scope.Close(Undefined());
 }
@@ -629,7 +639,12 @@ Handle<Value> OZW::SwitchOff(const Arguments& args)
 	HandleScope scope;
 
 	uint8_t nodeid = args[0]->ToNumber()->Value();
-	set_switch(nodeid, false);
+	uint8_t instance = 0;
+	if ( args.Length() > 1 ) {
+		instance = args[1]->ToNumber()->Value();
+	}
+
+	set_switch(nodeid, false, instance);
 
 	return scope.Close(Undefined());
 }
