@@ -316,18 +316,6 @@ void async_cb_handler(uv_async_t *handle, int status)
 				// @todo: see if this can be implemented to this code
 				break;
 			}
-			case OpenZWave::ValueID::ValueType_Schedule:
-			{
-				break;
-			}
-			case OpenZWave::ValueID::ValueType_Max:
-			{
-				break;
-			}
-			case OpenZWave::ValueID::ValueType_Raw:
-			{
-				break;
-			}
 			default:
 				fprintf(stderr, "unsupported value type: 0x%x\n", value.GetType());
 				break;
