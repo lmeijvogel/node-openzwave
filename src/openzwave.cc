@@ -48,7 +48,9 @@ struct OZW: ObjectWrap {
 	static Handle<Value> DisablePoll(const Arguments& args);
 	static Handle<Value> HardReset(const Arguments& args);
 	static Handle<Value> SoftReset(const Arguments& args);
+	static Handle<Value> HealNetworkNode(const Arguments& args);
 	static Handle<Value> HealNetwork(const Arguments& args);
+	static Handle<Value> GetNodeNeighbors(const Arguments& args);
 };
 
 Persistent<Object> context_obj;
@@ -757,12 +759,58 @@ Handle<Value> OZW::SoftReset(const Arguments& args)
 	return scope.Close(Undefined());
 }
 
+/*
+* Heal network node by requesting the node rediscover their neighbors.
+*/
+Handle<Value> OZW::HealNetworkNode(const Arguments& args)
+{
+	HandleScope scope;
+
+	uint8_t nodeid = args[0]->ToNumber()->Value();
+	uint8_t doRR = args[1]->ToBoolean()->Value();
+
+	OpenZWave::Manager::Get()->HealNetworkNode(homeid, nodeid, doRR);
+
+	return scope.Close(Undefined());
+}
+
+/*
+* Heal network by requesting node's rediscover their neighbors.
+* Sends a ControllerCommand_RequestNodeNeighborUpdate to every node.
+* Can take a while on larger networks.
+*/
 Handle<Value> OZW::HealNetwork(const Arguments& args)
 {
 	HandleScope scope;
 
 	bool doRR = true;
 	OpenZWave::Manager::Get()->HealNetwork(homeid, doRR);
+
+	return scope.Close(Undefined());
+}
+
+/*
+* Gets the neighbors for a node
+*/
+Handle<Value> OZW::GetNodeNeighbors(const Arguments& args)
+{
+	HandleScope scope;
+	uint8* neighbors;
+
+	uint8_t nodeid = args[0]->ToNumber()->Value();
+	uint8 numNeighbors = OpenZWave::Manager::Get()->GetNodeNeighbors(homeid, nodeid, &neighbors);
+	Local<Array> o_neighbors = Array::New(numNeighbors);
+
+	for( uint8 nr=0; nr < numNeighbors; nr++) {
+		o_neighbors->Set(Integer::New(nr), Integer::New(neighbors[nr]));
+	}
+
+	Local<Value> argv[3];
+	argv[0] = String::New("neighbors");
+	argv[1] = Integer::New(nodeid);
+	argv[2] = o_neighbors;
+
+	MakeCallback(context_obj, "emit", 3, argv);
 
 	return scope.Close(Undefined());
 }
@@ -788,7 +836,9 @@ extern "C" void init(Handle<Object> target)
 	NODE_SET_PROTOTYPE_METHOD(t, "disablePoll", OZW::EnablePoll);
 	NODE_SET_PROTOTYPE_METHOD(t, "hardReset", OZW::HardReset);
 	NODE_SET_PROTOTYPE_METHOD(t, "softReset", OZW::SoftReset);
+	NODE_SET_PROTOTYPE_METHOD(t, "healNetworkNode", OZW::HealNetworkNode);
 	NODE_SET_PROTOTYPE_METHOD(t, "healNetwork", OZW::HealNetwork);
+	NODE_SET_PROTOTYPE_METHOD(t, "getNeighbors", OZW::GetNodeNeighbors);
 
 	target->Set(String::NewSymbol("Emitter"), t->GetFunction());
 }
