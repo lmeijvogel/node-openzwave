@@ -311,6 +311,21 @@ void async_cb_handler(uv_async_t *handle, int status)
 			 */
 			case OpenZWave::ValueID::ValueType_Button:
 			{
+				// This commit does seem to have them though:
+				// https://github.com/voldemarpanso/node-openzwave/commit/4d495ab2258aac8343ebaf3a549f1afe1bbca3b5?diff=split
+				// @todo: see if this can be implemented to this code
+				break;
+			}
+			case OpenZWave::ValueID::ValueType_Schedule:
+			{
+				break;
+			}
+			case OpenZWave::ValueID::ValueType_Max:
+			{
+				break;
+			}
+			case OpenZWave::ValueID::ValueType_Raw:
+			{
 				break;
 			}
 			default:
