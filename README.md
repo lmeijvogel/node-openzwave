@@ -52,6 +52,7 @@ var zwave     = new OpenZWave('/dev/ttyUSB0', {
         driverattempts: 3,        // try this many times before giving up
         pollinterval: 500,        // interval between polls in milliseconds
         suppressrefresh: true,    // do not send updates if nothing changed
+        retrytimeout: 40000,      // retry sending commands after 40 seconds
 });
 ```
 
